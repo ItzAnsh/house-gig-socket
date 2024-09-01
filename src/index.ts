@@ -119,6 +119,25 @@ io.on("connection", (socket: any) => {
 		}
 	});
 
+	socket.on("lockSlot", async (data: any) => {
+		try {
+			const allSlotsInstance = AllSlots.getInstance();
+
+			const slot = allSlotsInstance.getSlots().find((slot) => slot.getId() === data.gigsterId);
+			if (!slot) {
+				socket.emit("error", "Slot not found");
+				return;
+			}
+
+			slot.slots.forEach((slot) => {
+				if (slot.id === data.slotId) {
+					slot.booked = true;
+				}
+			})
+		} catch(e) {
+
+		}})
+
 	socket.on("leaveRoom", (room: { id: string }) => {
 		try {
 			socket.leave(`${room.id}`);
